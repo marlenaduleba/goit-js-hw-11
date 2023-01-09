@@ -1,43 +1,40 @@
-import Notiflix from 'notiflix';
+import Notiflix, { Notify } from 'notiflix';
 import { getPhotos } from './fetchPhotos';
+import { page, limit } from './fetchPhotos';
 
-const form = document.querySelector("#search-form");
-const input = document.querySelector(".search-form__input");
-const button = document.querySelector(".search-form__btn");
-const gallery = document.querySelector(".gallery");
+const form = document.querySelector('#search-form');
+const input = document.querySelector('.search-form__input');
+const searchButton = document.querySelector('.search-form__btn');
+const loadButton = document.querySelector('.load-more');
+const gallery = document.querySelector('.gallery');
 
-
-// form.addEventListener(`submit`, (event) => {
-//     event.preventDefault();
-//     console.log(input.value);
-//     getPhotos(input.value)
-//     .then((res) => {
-//         console.log(res);
-//         console.log(res.data.hits);
-//         renderPhotos(res.data.hits);
-
-//     })
-//     .catch((error) => console.log(error));
-// });
 
 form.addEventListener(`submit`, makeGallery);
+loadButton.addEventListener(`click`, loadMore);
 
 async function makeGallery(event) {
-    const searchText = input.value;
-    event.preventDefault();
-    try { const photos = await getPhotos(searchText);
-    renderPhotos(photos.data.hits);
-        
-    } catch (error) {
-        console.log(error);
-    }
-   
+  event.preventDefault();
+  clear();
+  try {
+    const photos = await getPhotos(input.value);
+    console.log(photos);
+    if (photos.data.total === 0) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else {
+        renderPhotos(photos.data.hits);
+    };
+    
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function renderPhotos(photos) {
-    const markup = photos
-    .map((photo) => {
-        return `<div class="photo-card">
+  const markup = photos
+    .map(photo => {
+      return `<div class="photo-card">
         <img src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" />
         <div class="info">
           <p class="info-item">
@@ -57,12 +54,15 @@ function renderPhotos(photos) {
     })
     .join(``);
 
-    gallery.insertAdjacentHTML(`beforeend`, markup);
+  gallery.insertAdjacentHTML(`beforeend`, markup);
 }
 
+function clear() {
+    gallery.innerHTML = "";
+}
 
-
-
-
-
-
+async function loadMore(event) {
+event.preventDefault();
+const photos = await getPhotos(input.value);
+renderPhotos(photos.data.hits);
+}

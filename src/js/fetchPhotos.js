@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+export let page = 1;
+export let limit = 5;
+
+
 export async function getPhotos(searchValue) {
   const baseUrl = `https://pixabay.com/api/`;
   const searchParams = new URLSearchParams({
@@ -8,7 +12,9 @@ export async function getPhotos(searchValue) {
     image_type: `photo`,
     orientation: `horizontal`,
     safesearch: `true`,
+    per_page: limit,
+    page
   });
-  const photos = await axios.get(`${baseUrl}?${searchParams}`);
+  const photos = await axios.get(`${baseUrl}?${searchParams}`).then(page += 1);
   return photos;
 }
