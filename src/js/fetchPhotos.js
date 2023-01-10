@@ -1,7 +1,7 @@
 import axios from 'axios';
 export const pageDefault = 1;
 export let page = 1;
-export let limit = 5;
+export let limit = 40;
 
 
 export async function getPhotos(searchValue) {

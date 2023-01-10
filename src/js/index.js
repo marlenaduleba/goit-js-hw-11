@@ -1,6 +1,8 @@
 import Notiflix, { Notify } from 'notiflix';
 import { getPhotos, pageReset } from './fetchPhotos';
 import { page, limit, pageDefault } from './fetchPhotos';
+import simpleLightbox from 'simplelightbox';
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
@@ -37,7 +39,7 @@ function renderPhotos(photos) {
   const markup = photos
     .map(photo => {
       return `<div class="photo-card">
-        <img src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" />
+        <a href="${photo.largeImageURL}"><img src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
         <div class="info">
           <p class="info-item">
             <b>Likes: ${photo.likes}</b>
