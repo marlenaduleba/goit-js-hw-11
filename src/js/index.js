@@ -1,6 +1,6 @@
 import Notiflix, { Notify } from 'notiflix';
-import { getPhotos } from './fetchPhotos';
-import { page, limit } from './fetchPhotos';
+import { getPhotos, pageReset } from './fetchPhotos';
+import { page, limit, pageDefault } from './fetchPhotos';
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
@@ -9,11 +9,13 @@ const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
 
+
 form.addEventListener(`submit`, makeGallery);
 loadButton.addEventListener(`click`, loadMore);
 
 async function makeGallery(event) {
   event.preventDefault();
+  pageReset();
   clear();
   try {
     const photos = await getPhotos(input.value);

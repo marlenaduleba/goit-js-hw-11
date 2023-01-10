@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+export const pageDefault = 1;
 export let page = 1;
 export let limit = 5;
 
@@ -17,4 +17,8 @@ export async function getPhotos(searchValue) {
   });
   const photos = await axios.get(`${baseUrl}?${searchParams}`).then(page += 1);
   return photos;
+}
+
+export function pageReset() {
+page = pageDefault;
 }
