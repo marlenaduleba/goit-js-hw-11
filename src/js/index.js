@@ -3,6 +3,7 @@ import { getPhotos, pageReset } from './fetchPhotos';
 import { page, limit, pageDefault } from './fetchPhotos';
 import simpleLightbox from 'simplelightbox';
 import "simplelightbox/dist/simple-lightbox.min.css";
+import { icons } from './icons';
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
@@ -51,16 +52,16 @@ function renderPhotos(photos) {
         <a href="${photo.largeImageURL}"><img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
         <div class="info">
           <p class="info-item">
-            <b>Likes: ${photo.likes}</b>
+            <b>${icons.likes}${photo.likes}</b>
           </p>
           <p class="info-item">
-            <b>Views: ${photo.views}</b>
+            <b>${icons.views}${photo.views}</b>
           </p>
           <p class="info-item">
-            <b>Comments: ${photo.comments}</b>
+            <b>${icons.comments}${photo.comments}</b>
           </p>
           <p class="info-item">
-            <b>Downloads: ${photo.downloads}</b>
+            <b>${icons.downloads}${photo.downloads}</b>
           </p>
         </div>
       </div>`;
