@@ -10,7 +10,15 @@ const searchButton = document.querySelector('.search-form__btn');
 const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
+let lightbox;
 
+const lightboxOptions = {
+  captions: true,
+  captionSelector: "img",
+  captionType: "attr",
+  captionsData: "alt",
+  captionDelay: 250,
+}
 
 form.addEventListener(`submit`, makeGallery);
 loadButton.addEventListener(`click`, loadMore);
@@ -28,6 +36,7 @@ async function makeGallery(event) {
       );
     } else {
         renderPhotos(photos.data.hits);
+        lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions);
     };
     
   } catch (error) {
@@ -39,7 +48,7 @@ function renderPhotos(photos) {
   const markup = photos
     .map(photo => {
       return `<div class="photo-card">
-        <a href="${photo.largeImageURL}"><img src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
+        <a href="${photo.largeImageURL}"><img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
         <div class="info">
           <p class="info-item">
             <b>Likes: ${photo.likes}</b>
