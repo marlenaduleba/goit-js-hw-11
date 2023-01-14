@@ -37,7 +37,7 @@ async function makeGallery(event) {
       );
     } else {
         renderPhotos(photos.data.hits);
-        lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions);
+        lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
     };
     
   } catch (error) {
@@ -49,19 +49,19 @@ function renderPhotos(photos) {
   const markup = photos
     .map(photo => {
       return `<div class="photo-card">
-        <a href="${photo.largeImageURL}"><img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
+        <a class="gallery__link" href="${photo.largeImageURL}"><img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy" /></a>
         <div class="info">
           <p class="info-item">
-            <b>${icons.likes}${photo.likes}</b>
+            <b>${icons.likes}</b>${photo.likes}
           </p>
           <p class="info-item">
-            <b>${icons.views}${photo.views}</b>
+            <b>${icons.views}</b>${photo.views}
           </p>
           <p class="info-item">
-            <b>${icons.comments}${photo.comments}</b>
+            <b>${icons.comments}</b>${photo.comments}
           </p>
           <p class="info-item">
-            <b>${icons.downloads}${photo.downloads}</b>
+            <b>${icons.downloads}</b>${photo.downloads}
           </p>
         </div>
       </div>`;
@@ -79,4 +79,5 @@ async function loadMore(event) {
 event.preventDefault();
 const photos = await getPhotos(input.value);
 renderPhotos(photos.data.hits);
+lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
 }
