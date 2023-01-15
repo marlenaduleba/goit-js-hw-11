@@ -2,12 +2,13 @@ import axios from 'axios';
 export const pageDefault = 1;
 export let page = 1;
 export let limit = 40;
-
+export const myKey = `32655880-e7a49c73234a053b338665414`;
+export const baseUrl = `https://pixabay.com/api/`;
 
 export async function getPhotos(searchValue) {
-  const baseUrl = `https://pixabay.com/api/`;
+  
   const searchParams = new URLSearchParams({
-    key: `32655880-e7a49c73234a053b338665414`,
+    key: myKey,
     q: searchValue,
     image_type: `photo`,
     orientation: `horizontal`,

@@ -1,9 +1,11 @@
 import Notiflix, { Notify } from 'notiflix';
 import { getPhotos, pageReset } from './fetchPhotos';
-import { page, limit, pageDefault } from './fetchPhotos';
+import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
 import simpleLightbox from 'simplelightbox';
 import "simplelightbox/dist/simple-lightbox.min.css";
 import { icons } from './icons';
+import InfiniteScroll from 'infinite-scroll';
+
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
@@ -12,6 +14,15 @@ const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
 let lightbox;
+
+let infScroll = new InfiniteScroll(gallery, {
+  path: function () {
+    return `${baseUrl}?key=${myKey}&q=${input.value}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.pageIndex}`;
+  },
+  responseBody: 'json',
+  status: '.scroll-status',
+  history: false,
+});
 
 const lightboxOptions = {
   captions: true,
@@ -38,6 +49,7 @@ async function makeGallery(event) {
     } else {
         renderPhotos(photos.data.hits);
         lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
+        infScroll.loadNextPage();
     };
     
   } catch (error) {
@@ -75,9 +87,10 @@ function clear() {
     gallery.innerHTML = "";
 }
 
-async function loadMore(event) {
-event.preventDefault();
+async function loadMore() {
 const photos = await getPhotos(input.value);
 renderPhotos(photos.data.hits);
 lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
 }
+
+infScroll.on(`load`, loadMore);
