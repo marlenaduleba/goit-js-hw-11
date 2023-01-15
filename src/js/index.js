@@ -13,7 +13,15 @@ const searchButton = document.querySelector('.search-form__btn');
 const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
-let lightbox;
+const lightboxOptions = {
+  captions: true,
+  captionSelector: "img",
+  captionType: "attr",
+  captionsData: "alt",
+  captionDelay: 250,
+}
+
+let lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions);
 
 let infScroll = new InfiniteScroll(gallery, {
   path: function () {
@@ -23,14 +31,6 @@ let infScroll = new InfiniteScroll(gallery, {
   status: '.scroll-status',
   history: false,
 });
-
-const lightboxOptions = {
-  captions: true,
-  captionSelector: "img",
-  captionType: "attr",
-  captionsData: "alt",
-  captionDelay: 250,
-}
 
 form.addEventListener(`submit`, makeGallery);
 loadButton.addEventListener(`click`, loadMore);
@@ -48,8 +48,8 @@ async function makeGallery(event) {
       );
     } else {
         renderPhotos(photos.data.hits);
-        lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
         infScroll.loadNextPage();
+        lightbox.refresh();
     };
     
   } catch (error) {
@@ -90,7 +90,7 @@ function clear() {
 async function loadMore() {
 const photos = await getPhotos(input.value);
 renderPhotos(photos.data.hits);
-lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions).refresh();
+lightbox.refresh();
 }
 
 infScroll.on(`load`, loadMore);
