@@ -9,7 +9,6 @@ import InfiniteScroll from 'infinite-scroll';
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
-const searchButton = document.querySelector('.search-form__btn');
 const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
@@ -21,7 +20,7 @@ const lightboxOptions = {
   captionDelay: 250,
 }
 
-let lightbox = new SimpleLightbox(`.gallery a`, lightboxOptions);
+let lightbox = new simpleLightbox(`.gallery a`, lightboxOptions);
 
 let infScroll = new InfiniteScroll(gallery, {
   path: function () {
@@ -33,7 +32,10 @@ let infScroll = new InfiniteScroll(gallery, {
 });
 
 form.addEventListener(`submit`, makeGallery);
-loadButton.addEventListener(`click`, loadMore);
+infScroll.on(`load`, loadMore);
+infScroll.on( 'last', function() {
+  Notify.failure("We're sorry, but you've reached the end of search results.");
+});
 
 async function makeGallery(event) {
   event.preventDefault();
@@ -50,6 +52,7 @@ async function makeGallery(event) {
         renderPhotos(photos.data.hits);
         infScroll.loadNextPage();
         lightbox.refresh();
+        Notify.success(`Hooray! We found ${photos.data.totalHits} images.`);
     };
     
   } catch (error) {
@@ -93,4 +96,3 @@ renderPhotos(photos.data.hits);
 lightbox.refresh();
 }
 
-infScroll.on(`load`, loadMore);
