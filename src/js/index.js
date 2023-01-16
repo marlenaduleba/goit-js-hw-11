@@ -1,16 +1,27 @@
 import Notiflix, { Notify } from 'notiflix';
-import { getPhotos, pageReset } from './fetchPhotos';
-import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
 import simpleLightbox from 'simplelightbox';
 import "simplelightbox/dist/simple-lightbox.min.css";
-import { icons } from './icons';
 import InfiniteScroll from 'infinite-scroll';
+
+import { getPhotos, pageReset } from './fetchPhotos';
+import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
+import { icons } from './icons';
 
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
-const loadButton = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
+
+Notiflix.Notify.init({
+  opacity: 1,
+  timeout: 3000,
+  failure: {
+    background: `#FF5733`,
+  },
+  success: {
+    background: `#00BC5D`,
+  },
+  });
 
 const lightboxOptions = {
   captions: true,
@@ -27,24 +38,26 @@ let infScroll = new InfiniteScroll(gallery, {
     return `${baseUrl}?key=${myKey}&q=${input.value}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.pageIndex}`;
   },
   responseBody: 'json',
-  status: '.scroll-status',
   history: false,
 });
 
 form.addEventListener(`submit`, makeGallery);
 infScroll.on(`load`, loadMore);
-infScroll.on( 'last', function() {
-  Notify.failure("We're sorry, but you've reached the end of search results.");
-});
+
 
 async function makeGallery(event) {
+  const searchValue = input.value.trim();
   event.preventDefault();
   pageReset();
   clear();
   try {
-    const photos = await getPhotos(input.value);
+    const photos = await getPhotos(searchValue);
     console.log(photos);
-    if (photos.data.total === 0) {
+    if (searchValue === "") {
+      clear();
+      Notify.failure("You cannot search by empty field, try again.");
+    }
+    else if (photos.data.total === 0) {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -96,3 +109,7 @@ renderPhotos(photos.data.hits);
 lightbox.refresh();
 }
 
+infScroll.on( 'last', function() {
+  console.log("last page");
+  Notify.failure("We're sorry, but you've reached the end of search results.");
+});
