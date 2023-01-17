@@ -1,35 +1,35 @@
 import Notiflix, { Notify } from 'notiflix';
 import simpleLightbox from 'simplelightbox';
-import "simplelightbox/dist/simple-lightbox.min.css";
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import InfiniteScroll from 'infinite-scroll';
 
 import { getPhotos, pageReset } from './fetchPhotos';
 import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
 import { icons } from './icons';
 
-
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
 const gallery = document.querySelector('.gallery');
 
 Notiflix.Notify.init({
-  opacity: 1,
-  timeout: 3000,
+  position: 'center-center',
+  // opacity: 1,
+  // timeout: 3000,
   failure: {
     background: `#FF5733`,
   },
   success: {
     background: `#00BC5D`,
   },
-  });
+});
 
 const lightboxOptions = {
   captions: true,
-  captionSelector: "img",
-  captionType: "attr",
-  captionsData: "alt",
+  captionSelector: 'img',
+  captionType: 'attr',
+  captionsData: 'alt',
   captionDelay: 250,
-}
+};
 
 let lightbox = new simpleLightbox(`.gallery a`, lightboxOptions);
 
@@ -44,7 +44,6 @@ let infScroll = new InfiniteScroll(gallery, {
 form.addEventListener(`submit`, makeGallery);
 infScroll.on(`load`, loadMore);
 
-
 async function makeGallery(event) {
   const searchValue = input.value.trim();
   event.preventDefault();
@@ -53,21 +52,19 @@ async function makeGallery(event) {
   try {
     const photos = await getPhotos(searchValue);
     console.log(photos);
-    if (searchValue === "") {
+    if (searchValue === '') {
       clear();
-      Notify.failure("You cannot search by empty field, try again.");
-    }
-    else if (photos.data.total === 0) {
+      Notify.failure('You cannot search by empty field, try again.');
+    } else if (photos.data.total === 0) {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
     } else {
-        renderPhotos(photos.data.hits);
-        infScroll.loadNextPage();
-        lightbox.refresh();
-        Notify.success(`Hooray! We found ${photos.data.totalHits} images.`);
-    };
-    
+      renderPhotos(photos.data.hits);
+      infScroll.loadNextPage();
+      lightbox.refresh();
+      Notify.success(`Hooray! We found ${photos.data.totalHits} images.`);
+    }
   } catch (error) {
     console.log(error);
   }
@@ -100,16 +97,16 @@ function renderPhotos(photos) {
 }
 
 function clear() {
-    gallery.innerHTML = "";
+  gallery.innerHTML = '';
 }
 
 async function loadMore() {
-const photos = await getPhotos(input.value);
-renderPhotos(photos.data.hits);
-lightbox.refresh();
+  const photos = await getPhotos(input.value);
+  renderPhotos(photos.data.hits);
+  lightbox.refresh();
 }
 
-infScroll.on( 'last', function() {
-  console.log("last page");
+infScroll.on('last', function () {
+  console.log('last page');
   Notify.failure("We're sorry, but you've reached the end of search results.");
 });
