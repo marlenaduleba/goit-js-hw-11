@@ -12,9 +12,10 @@ const input = document.querySelector('.search-form__input');
 const gallery = document.querySelector('.gallery');
 
 Notiflix.Notify.init({
-  position: 'center-center',
-  // opacity: 1,
-  // timeout: 3000,
+  position: 'center-top',
+  distance: `80px`,
+  showOnlyTheLastOne: true,
+  clickToClose: true,
   failure: {
     background: `#FF5733`,
   },
