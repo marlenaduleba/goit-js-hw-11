@@ -1,5 +1,6 @@
 @import './common';
 @import "./variables";
+@import "./icon";
 
 
 
@@ -45,7 +46,7 @@
     display: grid;
     margin: 100px auto 50px;
    width: 95vw;
-    max-width: 1600px;
+    max-width: 1440px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 30px;
     justify-content: center;

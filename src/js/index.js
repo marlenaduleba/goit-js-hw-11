@@ -4,12 +4,16 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import InfiniteScroll from 'infinite-scroll';
 
 import { getPhotos, pageReset } from './fetchPhotos';
+import { onScroll, onToTopBtn } from './scroll';
 import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
 import { icons } from './icons';
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
 const gallery = document.querySelector('.gallery');
+
+onScroll();
+onToTopBtn();
 
 Notiflix.Notify.init({
   position: 'center-top',
@@ -119,4 +123,13 @@ infScroll.on( 'scrollThreshold', async function() {
     console.log(error);
   }
 
+})
+
+function smothScroll() {
+  const { height: cardHeight } =
+      document.querySelector(".photo-card").firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+  top: cardHeight * 3.9,
+  behavior: "smooth",
 });
+};
