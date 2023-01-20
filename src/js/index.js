@@ -107,7 +107,16 @@ async function loadMore() {
   lightbox.refresh();
 }
 
-infScroll.on('last', function () {
-  console.log('last page');
-  Notify.failure("We're sorry, but you've reached the end of search results.");
+infScroll.on( 'scrollThreshold', async function() {
+  console.log(page);
+  try {
+    const photos = await getPhotos(input.value.trim());
+    const totalPages = photos.data.totalHits / limit;
+    if (page >= totalPages) {
+      Notify.failure(`"We're sorry, but you've reached the end of search results.`)
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
 });
