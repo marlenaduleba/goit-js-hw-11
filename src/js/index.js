@@ -5,7 +5,7 @@ import InfiniteScroll from 'infinite-scroll';
 
 import { getPhotos, pageReset } from './fetchPhotos';
 import { onScroll, onToTopBtn } from './scroll';
-import { page, limit, pageDefault, baseUrl, myKey } from './fetchPhotos';
+import { page, limit, baseUrl, myKey } from './fetchPhotos';
 import { icons } from './icons';
 
 const form = document.querySelector('#search-form');
@@ -60,15 +60,18 @@ async function makeGallery(event) {
     if (searchValue === '') {
       clear();
       Notify.failure('You cannot search by empty field, try again.');
+      return;
     } else if (photos.data.total === 0) {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
+      return;
     } else {
       renderPhotos(photos.data.hits);
       infScroll.loadNextPage();
       lightbox.refresh();
       Notify.success(`Hooray! We found ${photos.data.totalHits} images.`);
+      return;
     }
   } catch (error) {
     console.log(error);
@@ -106,9 +109,14 @@ function clear() {
 }
 
 async function loadMore() {
-  const photos = await getPhotos(input.value);
+  try {
+    const photos = await getPhotos(input.value);
   renderPhotos(photos.data.hits);
   lightbox.refresh();
+  } catch (error) {
+    console.log(error);
+  }
+  
 }
 
 infScroll.on( 'scrollThreshold', async function() {
@@ -117,7 +125,8 @@ infScroll.on( 'scrollThreshold', async function() {
     const photos = await getPhotos(input.value.trim());
     const totalPages = photos.data.totalHits / limit;
     if (page >= totalPages) {
-      Notify.failure(`"We're sorry, but you've reached the end of search results.`)
+      Notify.info(`"We're sorry, but you've reached the end of search results.`,``);
+      return;
     }
   } catch (error) {
     console.log(error);
@@ -125,7 +134,7 @@ infScroll.on( 'scrollThreshold', async function() {
 
 })
 
-function smothScroll() {
+function smoothScroll() {
   const { height: cardHeight } =
       document.querySelector(".photo-card").firstElementChild.getBoundingClientRect();
   window.scrollBy({
