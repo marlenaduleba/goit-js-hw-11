@@ -34,7 +34,7 @@
   .form-field {
     display: flex;
     justify-content: space-between;
-    background-color: #fefefe;
+    background-color: $white;
     border-radius: 35px;
     box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
     0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
@@ -46,7 +46,7 @@
     display: grid;
     margin: 100px auto 50px;
    width: 95vw;
-    max-width: 1440px;
+    max-width: 1400px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 30px;
     justify-content: center;
