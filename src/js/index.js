@@ -11,9 +11,8 @@ import { icons } from './icons';
 const form = document.querySelector('#search-form');
 const input = document.querySelector('.search-form__input');
 const gallery = document.querySelector('.gallery');
+const buttonLoadMore = document.querySelector(".load-more");
 
-onScroll();
-onToTopBtn();
 
 Notiflix.Notify.init({
   position: 'center-top',
@@ -38,16 +37,20 @@ const lightboxOptions = {
 
 let lightbox = new simpleLightbox(`.gallery a`, lightboxOptions);
 
-let infScroll = new InfiniteScroll(gallery, {
-  path: function () {
-    return `${baseUrl}?key=${myKey}&q=${input.value}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.pageIndex}`;
-  },
-  responseBody: 'json',
-  history: false,
-});
+// let infScroll = new InfiniteScroll(gallery, {
+//   path: function () {
+//     return `${baseUrl}?key=${myKey}&q=${input.value}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.pageIndex}`;
+//   },
+//   responseBody: 'json',
+//   history: false,
+// });
 
 form.addEventListener(`submit`, makeGallery);
-infScroll.on(`load`, loadMore);
+buttonLoadMore.addEventListener(`click`, loadMore);
+//infScroll.on(`load`, loadMore);
+
+onScroll();
+onToTopBtn();
 
 async function makeGallery(event) {
   const searchValue = input.value.trim();
@@ -59,16 +62,19 @@ async function makeGallery(event) {
     console.log(photos);
     if (searchValue === '') {
       clear();
+      buttonHidden();
       Notify.failure('You cannot search by empty field, try again.');
       return;
     } else if (photos.data.total === 0) {
+      buttonHidden();
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
     } else {
       renderPhotos(photos.data.hits);
-      infScroll.loadNextPage();
+      buttonUnHidden();
+      //infScroll.loadNextPage();
       lightbox.refresh();
       Notify.success(`Hooray! We found ${photos.data.totalHits} images.`);
       return;
@@ -111,7 +117,13 @@ function clear() {
 async function loadMore() {
   try {
     const photos = await getPhotos(input.value);
+    const totalPages = page * limit;
+    if (photos.data.totalHits <= totalPages) {
+      buttonHidden();
+      Notify.info(`"We're sorry, but you've reached the end of search results."`);
+    }
   renderPhotos(photos.data.hits);
+  smoothScroll();
   lightbox.refresh();
   } catch (error) {
     console.log(error);
@@ -119,20 +131,20 @@ async function loadMore() {
   
 }
 
-infScroll.on( 'scrollThreshold', async function() {
-  console.log(page);
-  try {
-    const photos = await getPhotos(input.value.trim());
-    const totalPages = photos.data.totalHits / limit;
-    if (page >= totalPages) {
-      Notify.info(`"We're sorry, but you've reached the end of search results.`,``);
-      return;
-    }
-  } catch (error) {
-    console.log(error);
-  }
+// infScroll.on( 'scrollThreshold', async function() {
+//   console.log(page);
+//   try {
+//     const photos = await getPhotos(input.value.trim());
+//     const totalPages = photos.data.totalHits / limit;
+//     if (page >= totalPages) {
+//       Notify.info(`"We're sorry, but you've reached the end of search results.`,``);
+//       return;
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
 
-})
+// })
 
 function smoothScroll() {
   const { height: cardHeight } =
@@ -141,4 +153,12 @@ function smoothScroll() {
   top: cardHeight * 3.9,
   behavior: "smooth",
 });
+};
+
+function buttonHidden() {
+  buttonLoadMore.classList.add("visually-hidden");
+};
+
+function buttonUnHidden() {
+  buttonLoadMore.classList.remove("visually-hidden");
 };
